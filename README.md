@@ -42,6 +42,7 @@ cd Tiki-Data-FC
 pip install -r requirements.txt
 
 # 4. one command: downloads the external matches, trains, labels the match, writes submission/Tiki-Data.csv
+pip install torch==2.15.0 --index-url https://download.pytorch.org/whl/cpu   # CPU build of PyTorch
 python run.py
 ```
 
@@ -51,17 +52,19 @@ repository, default `../more-than-a-hack-2027`), `MTAH_CACHE_DIR` (caches, defau
 `run.py` prints the SHA-256 of the file it writes. Expected:
 
 ```
-SHA-256 fae48ed0ea0de4c55a5bf15666275f7855b7906cd0f465c28637cce2492aff7b
+SHA-256 2643c5b2c057235c057c592a15798fdcb120b77fb3c00f39180f2b420bd547d5
 ```
 
-Run time: about 1 h 20 min on a laptop CPU (most of it building and training on the external matches).
+Run time: about 1 h 30 min on a laptop CPU (most of it building and training on the external matches). The two sequence
+models run on CPU from their trained weights in `models/seq/` (retraining them needs a GPU: `tools/seq_model.py`).
+`python run.py --model lgb` gives the variant without the sequence model (SHA-256 `fae48ed0ea0de4c55a5bf15666275f7855b7906cd0f465c28637cce2492aff7b`).
 
 ## What the code does
 
 | layer | what | main code |
 |---|---|---|
 | 1 | Ball physics and dead-ball rules from the tracking (ball out, restarts, kick-offs, goalkeeper, players stopping) | `src/physics_*.py`, `src/postprocess.py`, `src/pipeline_approach_v13/14/15_physics.py` |
-| 2 | Frame model trained on external matches degraded to look like the provided tracking: P(dead), P(home), P(possession change) | `src/frame_features.py`, `src/degrade_v2.py`, `src/external_*.py`, `src/pipeline_approach_v17/19/20/21.py` |
+| 2 | Frame models trained on external matches degraded to look like the provided tracking: P(dead), P(possession change); P(home) from two sequence models (1-D convolution + bidirectional GRU) | `src/frame_features.py`, `src/degrade_v2.py`, `src/external_*.py`, `src/pipeline_approach_v17/19/20/21.py`, `tools/seq_*.py`, `models/seq/` |
 | 3 | Choosing whole possessions among the candidates of 28 decodings (scorer + exact interval selection) | `src/spell_select.py`, `src/noche_v21.py`, `src/decoding_v21.py` |
 | 4 | Rules of the game on the selected possessions | `src/pipeline_approach_v25.py`, `src/reglas_futbol.py`, `src/pipeline_approach_v30.py`, `tools/*.py` |
 

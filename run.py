@@ -14,7 +14,7 @@ import sys
 import time
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-MODEL = "seq" if "--model" in sys.argv and sys.argv[sys.argv.index("--model") + 1] == "seq" else "lgb"
+MODEL = "lgb" if "--model" in sys.argv and sys.argv[sys.argv.index("--model") + 1] == "lgb" else "seq"   # default: sequence model
 FINAL = os.path.join(ROOT, "experiments", "pipeline_approach_v30", "ours_pipeline_approach_v30.csv") if MODEL == "lgb" else     os.path.join(ROOT, "experiments", "pipeline_approach_v29", "ours_pipeline_approach_v29.csv")
 SUB = os.path.join(ROOT, "submission", "Tiki-Data.csv")
 

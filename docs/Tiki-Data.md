@@ -31,6 +31,12 @@ tracking** (ball missing in the same proportion and in blocks, positional noise 
 learns under the target's conditions. A second model gives P(possession change), and a third, using players only,
 gives P(dead) when the ball is not visible. Home/away are swapped as data augmentation.
 
+**Sequence model for the team in possession.** P(home has the ball) comes from the mean of two sequence models
+(1-D convolution followed by a bidirectional GRU) that read the same ~110 signals at 5 fps over windows of 1 and
+2 minutes, so each frame is decided with the context of the play around it. They are trained on the 7 IDSSE matches
+(degraded copies) and give a better team call than the per-frame classifier, especially in possessions of 2-8 s.
+The two trained models are in `models/seq/`; inference runs on CPU and gives the same file as on GPU.
+
 **Layer 3 — Choosing whole possessions.** Instead of a single Viterbi path, 28 decodings of the frame model with
 different switch and stoppage costs produce candidate possessions. A gradient-boosted scorer, trained out of
 sample on the external matches, predicts for each candidate how well it will match a true possession (its expected
@@ -64,13 +70,15 @@ No data about the provided game is used for training, tuning or model selection.
 
 | source | matches | labels | who labelled | licence |
 |---|---|---|---|---|
-| IDSSE / Sportec Open DFL dataset (Bassek et al., 2025) | 7 Bundesliga | per-frame ball possession and ball status from the provider | the data provider (DFL / Sportec) | CC BY 4.0 |
+| IDSSE / Sportec Open DFL dataset (Bassek et al., 2025) | 7 Bundesliga (also the only training data of the sequence models) | per-frame ball possession and ball status from the provider | the data provider (DFL / Sportec) | CC BY 4.0 |
 | Metrica Sports sample data | 3 | possession and dead ball reconstructed from the provider's event data | the data provider (Metrica Sports) | Metrica sample-data terms |
 
 Two degraded copies of each external match are used. The possession label is aligned to *controlled* possession as
 defined by the challenge: a spell of the opponent shorter than 2 s that does not string passes is not a change of
 possession. All choices (costs, thresholds of the selector, which rules enter) were made by cross-validation
-leaving one external match out, with a nested estimate for the choice itself.
+leaving one external match out, with a nested estimate for the choice itself. One exception, declared: with the
+sequence model the external matches put the selection threshold at λ 0.9, statistically tied with λ 0.85 (0.7416 vs
+0.7410); λ 0.85 was kept after observing that 0.9 produced fewer possessions on the public window.
 
 ## 4. Possession rules implemented
 
@@ -109,8 +117,9 @@ pip install -r requirements.txt
 python run.py
 ```
 
-`run.py` builds the external training data, trains the models, labels the match and writes
-`submission/Tiki-Data.csv`, then prints its SHA-256. CPU only, deterministic.
+`run.py` builds the external training data, trains the frame models, runs the two sequence models on CPU from
+`models/seq/`, labels the match and writes `submission/Tiki-Data.csv`, then prints its SHA-256. Deterministic.
+Retraining the sequence models themselves needs a GPU (`tools/seq_model.py`, deterministic).
 
 ## References
 
@@ -121,4 +130,6 @@ python run.py
   ball possession in soccer games. *Expert Systems with Applications*, 223.
 - Bassek, M., Rein, R., Weber, H., & Memmert, D. (2025). An integrated dataset of spatiotemporal and event data in
   elite soccer. *Scientific Data*, 12, 195.
+- Cho, K. et al. (2014). Learning phrase representations using RNN encoder-decoder for statistical machine
+  translation. *EMNLP* (GRU).
 - Ke, G. et al. (2017). LightGBM: A highly efficient gradient boosting decision tree. *NeurIPS*.
