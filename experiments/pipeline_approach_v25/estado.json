@@ -1,0 +1,76 @@
+{
+ "cfg": {
+  "metrica_train": false,
+  "extra": [],
+  "deg": 5
+ },
+ "oof": "C_v5",
+ "decoder": {
+  "c_team": 30.0,
+  "c_dead": 20.0,
+  "min_s": 0.0,
+  "smooth_s": 0.0
+ },
+ "alpha": 0.9,
+ "cv": {
+  "DFL-MAT-J03WMX": 0.6696629213483147,
+  "DFL-MAT-J03WN1": 0.5758865248226951,
+  "DFL-MAT-J03WOH": 0.6608,
+  "DFL-MAT-J03WOY": 0.6145985401459855,
+  "DFL-MAT-J03WPY": 0.6721649484536082,
+  "DFL-MAT-J03WQQ": 0.6307692307692309,
+  "DFL-MAT-J03WR9": 0.6342494714587738,
+  "metrica_1": 0.718082788671024,
+  "metrica_2": 0.6684931506849315,
+  "metrica_3": 0.7693581780538302
+ },
+ "restart_snap": {
+  "thr": 2.5,
+  "w": 1.0
+ },
+ "w_rule": 0.3,
+ "dead_src": "players10",
+ "spell_select": {
+  "specs": "variedad",
+  "extra": true,
+  "obj": "l2",
+  "seeds": 1,
+  "lam": 0.75,
+  "seed1": true
+ },
+ "post": [
+  [
+   "fill",
+   {
+    "same_s": 2.0,
+    "diff_s": 5.0,
+    "reason": 0.3
+   }
+  ]
+ ],
+ "post_alt": [
+  [
+   "fill",
+   {
+    "same_s": 2.0,
+    "diff_s": 5.0,
+    "reason": 0.3
+   }
+  ],
+  [
+   "keeper",
+   {
+    "max_s": 15.0,
+    "look_s": 0.5
+   }
+  ],
+  [
+   "restart",
+   {
+    "v_slow": 3.0,
+    "d_opp": 12.0,
+    "min_s": 1.0
+   }
+  ]
+ ]
+}

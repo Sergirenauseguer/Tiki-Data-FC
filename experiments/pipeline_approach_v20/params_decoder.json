@@ -1,0 +1,9 @@
+{
+ "p2_deg2_DFL": {
+  "c_team": 10.0,
+  "c_dead": 80.0,
+  "smooth_s": 0.0,
+  "min_s": 2.0,
+  "w_rule": 1.0
+ }
+}
