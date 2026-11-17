@@ -51,10 +51,10 @@ repository, default `../more-than-a-hack-2027`), `MTAH_CACHE_DIR` (caches, defau
 `run.py` prints the SHA-256 of the file it writes. Expected:
 
 ```
-SHA-256 __SHA__
+SHA-256 fae48ed0ea0de4c55a5bf15666275f7855b7906cd0f465c28637cce2492aff7b
 ```
 
-Run time: about 40 minutes on a laptop CPU (most of it building and training on the external matches).
+Run time: about 1 h 20 min on a laptop CPU (most of it building and training on the external matches).
 
 ## What the code does
 
