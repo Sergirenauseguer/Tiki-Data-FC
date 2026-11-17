@@ -267,7 +267,6 @@ def barca_select(tabs, lam, name, costs=COSTS, cols=None, specs=None, extra=Fals
     lab = P.V17.apply_definitions(lab, load_atd())
     out = os.path.join(P.OUT_DIR, 'barca_{}.csv'.format(name))
     pd.DataFrame({'frame': np.arange(len(lab)), 'label': lab}).to_csv(out, index=False)
-    print(P.compare_barca(out).to_string(index=False), flush=True)
     return out
 LAMBDAS2 = (0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 1.0)
 
@@ -464,7 +463,38 @@ def final_select(name='final', estado_file=None):
     specs = specs_of(sel['specs'])
     tabs = spec_tables(specs, sel.get('extra', False))
     return barca_select(train_tabs(tabs, specs, sel.get('extra', False)), float(sel['lam']), name, specs=specs, extra=sel.get('extra', False))
-STEPS = {}
+
+def step_ref(add=None):
+    kind = P.REF_KIND + ('_' + add if add else '')
+    e = json.load(open(os.path.join(P.OUT_DIR, 'estado_N1.5.json')))
+    CACHE.clear()
+    OVERRIDE.clear()
+    OVERRIDE.update({k: e.get(k) for k in ('cfg', 'oof', 'seed_tag')})
+    sel = e['spell_select']
+    SCORER.update(obj=sel.get('obj', 'l2'), seeds=1)
+    SEED1.update(on=True, seeds=[1])
+    specs = specs_of(sel['specs'] + ('+' + add if add else ''))
+    extra = sel.get('extra', False)
+    tabs = spec_tables(specs, extra)
+    p = scores_for(tabs, specs, extra)
+    lam, per, nest, _ = eval_select(tabs, p, LAMBDAS2)
+    print('{}: {} decodificaciones, {} candidatas en total'.format(kind, len(specs), sum((len(t[0]) for t in tabs.values()))), flush=True)
+    rows = []
+    for lm in LAMBDAS2:
+        for m, (S, E, T, X, v) in tabs.items():
+            lab = SS.render(len(P.reference(m)[0]), S, E, T, SS.select(S, E, 2 * p[m] - lm))
+            st_ = np.r_[0, np.flatnonzero(lab[1:] != lab[:-1]) + 1]
+            rows.append({'ref_entreno': kind, 'lam': lm, 'partido': m, 'spell_vs_smooth': P.score_match(m, lab, 'smooth'), 'spell_vs_raw': P.score_match(m, lab, 'raw'), 'spell_vs_c20': P.score_match(m, lab, 'c20'), 'pos_min': np.sum(lab[st_] != 'D') / (len(lab) / 1500)})
+    df = pd.DataFrame(rows)
+    df.to_csv(os.path.join(P.OUT_DIR, 'ref_cmp_{}.csv'.format(kind)), index=False)
+    for col in ('spell_vs_smooth', 'spell_vs_raw', 'spell_vs_c20'):
+        d = df[df.lam == lam]
+        print('{} λ {}: {} nota {:.4f}'.format(kind, lam, col, P.nota(dict(zip(d.partido, d[col])))[0]), flush=True)
+    print('{}: λ elegido {} anidada {:.4f}; pos/min medio {:.2f}'.format(kind, lam, nest, df[df.lam == lam].pos_min.mean()), flush=True)
+    P.log_row('REF', 'referencia {} (config. N1.5), λ {:g} (anidada {:.4f})'.format(kind, lam, nest), 'CV-10', {'nota': P.nota(per)[0], 'IDSSE': P.nota(per)[1], 'Metrica': P.nota(per)[2]}, 'medir', '')
+    barca_select(train_tabs(tabs, specs, extra), lam, 'R_' + kind, specs=specs, extra=extra)
+    OVERRIDE.clear()
+STEPS = {'ref': step_ref}
 
 def main():
     ap = argparse.ArgumentParser()

@@ -20,8 +20,8 @@ from tools.restart_wait import apply as restart_wait  # noqa: E402
 from src.pipeline_approach_v26 import short_dead_support  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-IN = os.path.join(ROOT, "experiments", "pipeline_approach_v25", "ours_pipeline_approach_v25_reglas.csv")
-OUT = os.path.join(ROOT, "experiments", "pipeline_approach_v30", "ours_pipeline_approach_v30.csv")
+IN = os.environ.get("RULES_IN") or os.path.join(ROOT, "experiments", "pipeline_approach_v25", "ours_pipeline_approach_v25_reglas.csv")
+OUT = os.environ.get("RULES_OUT") or os.path.join(ROOT, "experiments", "pipeline_approach_v30", "ours_pipeline_approach_v30.csv")
 
 
 def main():

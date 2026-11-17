@@ -24,3 +24,7 @@ __pycache__/
 .DS_Store
 .vscode/
 .idea/
+
+# trained sequence models and their outputs on the external matches (no match data)
+!experiments/pipeline_approach_v21/seq_full.npz
+!experiments/pipeline_approach_v21/seq_full_s1w600.npz
