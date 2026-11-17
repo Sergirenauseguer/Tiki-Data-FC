@@ -227,8 +227,6 @@ def load_match(match_id, path=None):
 if __name__ == '__main__':
     for mid in list_matches():
         if os.path.isfile(os.path.join(OUT_DIR, mid + '.npz')):
-            load_degraded(mid)
-        if os.path.isfile(os.path.join(OUT_DIR, mid + '.npz')):
             print('ok   {}'.format(mid))
             continue
         try:
