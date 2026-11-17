@@ -1,0 +1,26 @@
+# Match data is licensed for the competition only and must never be committed (RULES.md, "The data").
+data/
+*.mp4
+*_atd.txt
+*_atd.xml
+*_homography.csv
+*_smart_tagging.xml
+
+# Derived data that could reconstruct the match (frame-level tracking exports, clips, caches)
+cache/
+*.npz
+*.npy
+*.parquet
+visor/
+
+# External datasets are downloaded by scripts, not committed
+external/
+
+# Environments and tooling
+.venv*/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+.vscode/
+.idea/
