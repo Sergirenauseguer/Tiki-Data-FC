@@ -31,6 +31,8 @@ STEPS = [
 E21 = "experiments/pipeline_approach_v21/"
 SEQ = {"MTAH_REF": "smooth", "SEQ_FILES": "seq_full_cpu.npz,seq_full_s1w600_cpu.npz", "SEQ_TAG": "_ens"}
 STEPS_SEQ = STEPS[:5] + [
+    ("layer 1: dead-ball rules on the match", [sys.executable, "-c",
+     "import sys; sys.path[:0] = ['src', '.']; import pipeline_approach_v20 as V; V.setup(2); V.step_rules()"], {}),
     ("layer 2: frame models on the external matches (out of sample)", [sys.executable, "src/noche_v21.py", "--step", "ref"],
      {"MTAH_REF": "smooth"}),
     ("sequence model: signals of the match at 5 fps", [sys.executable, "tools/seq_export.py"], {}),
