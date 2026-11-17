@@ -34,7 +34,8 @@ def main():
     out_dir = os.path.join(ROOT, 'experiments', 'pipeline_approach_v21_seq' + TAG + ('' if w == 1.0 else '_w{:g}'.format(w)))
     os.makedirs(out_dir, exist_ok=True)
     for f in COPY:
-        shutil.copy(os.path.join(V21, f), out_dir)
+        if os.path.isfile(os.path.join(V21, f)):
+            shutil.copy(os.path.join(V21, f), out_dir)
     shutil.copy(os.path.join(V21, 'estado_N1.5.json'), os.path.join(out_dir, 'estado.json'))
     z = dict(np.load(os.path.join(V21, 'oof_C_v5.npz')))
     s1 = dict(np.load(os.path.join(V21, 'noche_seed1.npz')))
