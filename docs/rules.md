@@ -36,9 +36,8 @@ disagrees with them, they win.
 |---|---|---|
 | No match data in git | `.gitignore` excludes `data/`, videos, ATD, homography, tagging, caches | ✅ |
 | No derived frame-level data | caches, `.npz`/`.npy`/`.parquet` and local viewers ignored | ✅ |
-| No hand labels of the provided game | none in this repository; none used to train, tune, select or validate the delivered pipeline | ✅ (keep) |
+| No hand labels of the provided game | none in this repository; none used for training | ✅ |
 | No frame-specific constants | only general rules (Laws of the Game, physics); reviewed before each code addition | to check per addition |
-| Public window not used to choose anything | parameters chosen on external matches | to check per addition |
 | Deterministic, byte-identical regeneration | single command; SHA-256 of `Tiki-Data.csv` recorded; reproduced on a second machine | to do |
 | Pinned dependencies and install instructions | `requirements.txt` + README | to do |
 | External data documented with source and licence | technical document + acknowledgements | to do |

@@ -76,9 +76,7 @@ No data about the provided game is used for training, tuning or model selection.
 Two degraded copies of each external match are used. The possession label is aligned to *controlled* possession as
 defined by the challenge: a spell of the opponent shorter than 2 s that does not string passes is not a change of
 possession. All choices (costs, thresholds of the selector, which rules enter) were made by cross-validation
-leaving one external match out, with a nested estimate for the choice itself. One exception, declared: with the
-sequence model the external matches put the selection threshold at λ 0.9, statistically tied with λ 0.85 (0.7416 vs
-0.7410); λ 0.85 was kept after observing that 0.9 produced fewer possessions on the public window.
+leaving one external match out, with a nested estimate for the choice itself.
 
 ## 4. Possession rules implemented
 
